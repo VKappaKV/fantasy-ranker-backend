@@ -2,8 +2,11 @@
 
 ## Run
 
-cp .env.example .env
-make run
+initiate local env
+`cp .env.example .env`
+
+start server
+`make run`
 
 ## Endpoints
 
