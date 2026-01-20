@@ -10,6 +10,7 @@ type Config struct {
 	Env      string
 	HTTPAddr string
 	Version  string
+	RiotAPIKey string
 }
 
 func Load() Config {
@@ -19,6 +20,7 @@ func Load() Config {
 		Env:      getEnv("APP_ENV", "dev"),
 		HTTPAddr: getEnv("HTTP_ADDR", ":8080"),
 		Version:  getEnv("APP_VERSION", "0.1.0"),
+		RiotAPIKey: getEnv("RIOT_API_KEY", ""),
 	}
 }
 
