@@ -6,19 +6,34 @@ import (
 )
 
 type Error struct {
-	HTTPStatus int
-	Message    string
+	HTTPStatus        int
+	Message           string
+	RetryAfterSeconds *int
 }
 
 func (e *Error) Error() string {
-	return fmt.Sprintf("riot error (%d): %s", e.HTTPStatus, e.Message)
+	if e.Message != "" {
+		return fmt.Sprintf("riot error (%d): %s", e.HTTPStatus, e.Message)
+	}
+	return fmt.Sprintf("riot error (%d)", e.HTTPStatus)
 }
 
-func parseRiotError(status int, body []byte) error {
-	// Riot tipicamente manda { "status": { "message": "...", "status_code": ... } }
-	var re RiotAPIError
+type riotAPIError struct {
+	Status struct {
+		Message    string `json:"message"`
+		StatusCode int    `json:"status_code"`
+	} `json:"status"`
+}
+
+func parseRiotError(status int, body []byte, retryAfterSeconds *int) error {
+	var re riotAPIError
 	if err := json.Unmarshal(body, &re); err == nil && re.Status.Message != "" {
-		return &Error{HTTPStatus: status, Message: re.Status.Message}
+		return &Error{HTTPStatus: status, Message: re.Status.Message, RetryAfterSeconds: retryAfterSeconds}
 	}
-	return &Error{HTTPStatus: status, Message: string(body)}
+	// fallback if body isn't JSON
+	msg := string(body)
+	if msg == "" {
+		msg = "upstream error"
+	}
+	return &Error{HTTPStatus: status, Message: msg, RetryAfterSeconds: retryAfterSeconds}
 }

@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strconv"
 	"time"
 )
 
@@ -24,6 +25,7 @@ func New(apiKey string) *Client {
 	}
 }
 
+
 func (c *Client) doJSON(ctx context.Context, method, fullURL string, out any) error {
 	req, err := http.NewRequestWithContext(ctx, method, fullURL, nil)
 	if err != nil {
@@ -40,7 +42,14 @@ func (c *Client) doJSON(ctx context.Context, method, fullURL string, out any) er
 	body, _ := io.ReadAll(resp.Body)
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return parseRiotError(resp.StatusCode, body)
+		var retryAfter *int
+		// Riot rate limit responses often include Retry-After header (seconds)
+		if h := resp.Header.Get("Retry-After"); h != "" {
+			if n, err := strconv.Atoi(h); err == nil {
+				retryAfter = &n
+			}
+		}
+		return parseRiotError(resp.StatusCode, body, retryAfter)
 	}
 
 	if out == nil {

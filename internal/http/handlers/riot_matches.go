@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/VKappaKV/fantasy-ranker-backend/internal/domain"
 	"github.com/VKappaKV/fantasy-ranker-backend/internal/riot"
 )
 
@@ -18,20 +19,21 @@ type riotMatchesResponse struct {
 
 func RiotMatches(c *riot.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		region := strings.TrimSpace(r.URL.Query().Get("region"))
-		puuid := strings.TrimSpace(r.URL.Query().Get("puuid"))
+		region, err := domain.ParseRegion(r.URL.Query().Get("region"))
+		if err != nil {
+			writeAPIError(w, http.StatusBadRequest, "INVALID_REGION", err.Error(), nil)
+			return
+		}
 
-		if region == "" || puuid == "" {
-			writeJSON(w, http.StatusBadRequest, errorResponse{
-				Error: "missing required query params: region, puuid",
-			})
+		puuid := strings.TrimSpace(r.URL.Query().Get("puuid"))
+		if puuid == "" {
+			writeAPIError(w, http.StatusBadRequest, "MISSING_PARAM", "missing required query param: puuid", nil)
 			return
 		}
 
 		start := parseIntDefault(r.URL.Query().Get("start"), 0)
 		count := parseIntDefault(r.URL.Query().Get("count"), 20)
 
-		// clamp di sicurezza
 		if start < 0 {
 			start = 0
 		}
@@ -42,15 +44,15 @@ func RiotMatches(c *riot.Client) http.HandlerFunc {
 			count = 100
 		}
 
-		ids, err := c.MatchIDsByPUUID(r.Context(), region, puuid, start, count)
+		ids, err := c.MatchIDsByPUUID(r.Context(), string(region), puuid, start, count)
 		if err != nil {
-			writeRiotError(w, err)
+			writeMappedError(w, err)
 			return
 		}
 
 		writeJSON(w, http.StatusOK, riotMatchesResponse{
 			PUUID:    puuid,
-			Region:   region,
+			Region:   string(region),
 			Start:    start,
 			Count:    count,
 			MatchIDs: ids,
