@@ -1,7 +1,7 @@
 .PHONY: run test tidy lint
 
 run:
-	go run ./cmd/api
+	air
 
 test:
 	go test ./... -count=1
