@@ -1,0 +1,14 @@
+services:
+  db:
+    image: postgres:16
+    container_name: fantasy_ranker_db
+    environment:
+      POSTGRES_USER: fantasy
+      POSTGRES_PASSWORD: fantasy
+      POSTGRES_DB: fantasy_ranker_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata:

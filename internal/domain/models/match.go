@@ -22,14 +22,6 @@ type KDA struct {
 	Assists int
 }
 
-func (k KDA) Ratio() float64 {
-	if k.Deaths == 0 {
-		return float64(k.Kills + k.Assists)
-	}
-	return float64(k.Kills+k.Assists) / float64(k.Deaths)
-}
-
-
 type PlayerID string
 
 type QueueType int

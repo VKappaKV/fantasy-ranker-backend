@@ -3,7 +3,7 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/VKappaKV/fantasy-ranker-backend/internal/domain"
+	"github.com/VKappaKV/fantasy-ranker-backend/internal/domain/rules"
 	"github.com/VKappaKV/fantasy-ranker-backend/internal/riot"
 )
 
@@ -17,14 +17,14 @@ type riotAccountResponse struct {
 
 func RiotAccount(c *riot.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		region, err := domain.ParseRegion(r.URL.Query().Get("region"))
+		region, err := rules.ParseRegion(r.URL.Query().Get("region"))
 
 		if err != nil {
 			writeAPIError(w, http.StatusBadRequest, "INVALID_REGION", err.Error(), nil)
 			return
 		}
 				
-		riotID, err := domain.ParseRiotID(r.URL.Query().Get("riotId"))
+		riotID, err := rules.ParseRiotID(r.URL.Query().Get("riotId"))
 		if err != nil {
 			writeAPIError(w, http.StatusBadRequest, "INVALID_RIOT_ID", err.Error(), nil)
 			return
