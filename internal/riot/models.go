@@ -12,3 +12,23 @@ type RiotAPIError struct {
 		StatusCode int    `json:"status_code"`
 	} `json:"status"`
 }
+
+// the DTO for match data
+type RiotMatch struct {
+	Metadata struct {
+		MatchID string `json:"matchId"`
+	} `json:"metadata"`
+
+	Info struct {
+		GameDuration int64 `json:"gameDuration"`
+		QueueID      int   `json:"queueId"`
+		Participants []struct {
+			PUUID    string `json:"puuid"`
+			Champion string `json:"championName"`
+			Kills    int    `json:"kills"`
+			Deaths   int    `json:"deaths"`
+			Assists  int    `json:"assists"`
+			Win      bool   `json:"win"`
+		} `json:"participants"`
+	} `json:"info"`
+}

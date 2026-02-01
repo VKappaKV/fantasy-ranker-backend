@@ -5,4 +5,5 @@ import "errors"
 var (
 	ErrInvalidRegion = errors.New("invalid region")
 	ErrInvalidRiotID = errors.New("invalid riotId")
+	ErrUnknownChampion = errors.New("unknown champion")
 )
