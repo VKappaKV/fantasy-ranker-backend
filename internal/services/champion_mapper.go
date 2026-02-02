@@ -1,19 +1,18 @@
 package services
 
 import (
-	models "github.com/VKappaKV/fantasy-ranker-backend/internal/domain/models"
-	rules "github.com/VKappaKV/fantasy-ranker-backend/internal/domain/rules"
+	d "github.com/VKappaKV/fantasy-ranker-backend/internal/domain"
 )
 
-func ChampionFromRiot(name string) (models.Champion, error) {
+func ChampionFromRiot(name string) (d.Champion, error) {
 	switch name {
 	case "Ahri":
-		return models.ChampionAhri, nil
+		return d.ChampionAhri, nil
 	case "LeeSin":
-		return models.ChampionLeeSin, nil
+		return d.ChampionLeeSin, nil
 	case "MissFortune":
-		return models.ChampionMissFortune, nil
+		return d.ChampionMissFortune, nil
 	default:
-		return "", rules.ErrUnknownChampion
+		return "", d.ErrUnknownChampion
 	}
 }

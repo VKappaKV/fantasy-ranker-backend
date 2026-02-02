@@ -3,18 +3,18 @@ package services
 import (
 	"time"
 
-	models "github.com/VKappaKV/fantasy-ranker-backend/internal/domain/models"
+	d "github.com/VKappaKV/fantasy-ranker-backend/internal/domain"
 	"github.com/VKappaKV/fantasy-ranker-backend/internal/riot"
 )
 
-func MapRiotMatchToDomain(dto riot.RiotMatch) models.Match {
-	players := make([]models.MatchPlayer, 0, len(dto.Info.Participants))
+func MapRiotMatchToDomain(dto riot.RiotMatch) d.Match {
+	players := make([]d.MatchPlayer, 0, len(dto.Info.Participants))
 
 	for _, p := range dto.Info.Participants {
-		players = append(players, models.MatchPlayer{
-			PlayerID: models.PlayerID(p.PUUID),
-			Champion: models.Champion(p.Champion),
-			KDA: models.KDA{
+		players = append(players, d.MatchPlayer{
+			PlayerID: d.PlayerID(p.PUUID),
+			Champion: d.Champion(p.Champion),
+			KDA: d.KDA{
 				Kills:   p.Kills,
 				Deaths:  p.Deaths,
 				Assists: p.Assists,
@@ -23,10 +23,10 @@ func MapRiotMatchToDomain(dto riot.RiotMatch) models.Match {
 		})
 	}
 
-	return models.Match{
+	return d.Match{
 		ID:       dto.Metadata.MatchID,
 		Duration: time.Duration(dto.Info.GameDuration) * time.Second,
-		Queue:    models.QueueFromRiotID(dto.Info.QueueID),
+		Queue:    d.QueueFromRiotID(dto.Info.QueueID),
 		Players:  players,
 	}
 }

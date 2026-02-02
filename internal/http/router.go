@@ -10,6 +10,7 @@ import (
 	"github.com/VKappaKV/fantasy-ranker-backend/internal/config"
 	"github.com/VKappaKV/fantasy-ranker-backend/internal/http/handlers"
 	"github.com/VKappaKV/fantasy-ranker-backend/internal/riot"
+	"github.com/VKappaKV/fantasy-ranker-backend/internal/services"
 	"github.com/VKappaKV/fantasy-ranker-backend/internal/storage"
 )
 
@@ -29,6 +30,15 @@ func NewRouter(cfg config.Config, db *storage.DB) http.Handler {
 		r.Route("/riot", func(r chi.Router) {
 			r.Get("/account", handlers.RiotAccount(riotClient))
 			r.Get("/matches", handlers.RiotMatches(riotClient))
+		})
+	})
+
+	playerRepo := storage.NewPlayerRepo(db)
+	playerService := services.NewPlayerService(riotClient, playerRepo)
+
+	r.Route("/v1", func(r chi.Router) {
+		r.Route("/player", func(r chi.Router) {
+			r.Post("/register", handlers.RegisterPlayer(playerService))
 		})
 	})
 

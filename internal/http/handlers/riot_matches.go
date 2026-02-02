@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/VKappaKV/fantasy-ranker-backend/internal/domain/rules"
+	d "github.com/VKappaKV/fantasy-ranker-backend/internal/domain"
 	"github.com/VKappaKV/fantasy-ranker-backend/internal/riot"
 )
 
@@ -19,7 +19,7 @@ type riotMatchesResponse struct {
 
 func RiotMatches(c *riot.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		region, err := rules.ParseRegion(r.URL.Query().Get("region"))
+		region, err := d.ParseRegion(r.URL.Query().Get("region"))
 		if err != nil {
 			writeAPIError(w, http.StatusBadRequest, "INVALID_REGION", err.Error(), nil)
 			return
