@@ -11,6 +11,7 @@ type Config struct {
 	HTTPAddr string
 	Version  string
 	RiotAPIKey string
+	DBURL	string
 }
 
 func Load() Config {
@@ -21,6 +22,7 @@ func Load() Config {
 		HTTPAddr: getEnv("HTTP_ADDR", ":8080"),
 		Version:  getEnv("APP_VERSION", "0.1.0"),
 		RiotAPIKey: getEnv("RIOT_API_KEY", ""),
+		DBURL: getEnv("DB_URL", ""),
 	}
 }
 

@@ -16,13 +16,13 @@ type MatchPlayer struct {
 	Win       bool
 }
 
+type PlayerID string
+
 type KDA struct {
 	Kills   int
 	Deaths  int
 	Assists int
 }
-
-type PlayerID string
 
 type QueueType int
 

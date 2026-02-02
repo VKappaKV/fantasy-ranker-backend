@@ -10,9 +10,10 @@ import (
 	"github.com/VKappaKV/fantasy-ranker-backend/internal/config"
 	"github.com/VKappaKV/fantasy-ranker-backend/internal/http/handlers"
 	"github.com/VKappaKV/fantasy-ranker-backend/internal/riot"
+	"github.com/VKappaKV/fantasy-ranker-backend/internal/storage"
 )
 
-func NewRouter(cfg config.Config) http.Handler {
+func NewRouter(cfg config.Config, db *storage.DB) http.Handler {
 	r := chi.NewRouter()
 	riotClient := riot.New(cfg.RiotAPIKey)
 

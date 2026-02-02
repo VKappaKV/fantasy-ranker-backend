@@ -1,7 +1,8 @@
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
-CREATE TABLE players (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+
+CREATE TABLE IF NOT EXISTS players (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   puuid TEXT NOT NULL UNIQUE,
   region TEXT NOT NULL CHECK (region IN ('europe','americas','asia')),
   game_name TEXT NOT NULL,
@@ -10,5 +11,5 @@ CREATE TABLE players (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
--- Per ricerche per RiotID
-CREATE INDEX players_riotid_idx ON players (game_name, tag_line, region);
+CREATE INDEX IF NOT EXISTS players_riotid_idx
+  ON players (region, game_name, tag_line);
