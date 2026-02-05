@@ -73,9 +73,13 @@ func (c *Client) AccountByRiotID(ctx context.Context, region, gameName, tagLine 
 }
 
 func (c *Client) MatchIDsByPUUID(ctx context.Context, region, puuid string, start, count int) ([]string, error) {
-	u := fmt.Sprintf("https://%s.api.riotgames.com/lol/match/v5/matches/by-puuid/%s/ids?start=%d&count=%d",
+	queue := 420 // Ranked Solo/Duo queue ID
+	_type := "ranked" // Match type filter
+	u := fmt.Sprintf("https://%s.api.riotgames.com/lol/match/v5/matches/by-puuid/%s/ids?queue=%d&type=%s&start=%d&count=%d",
 		region,
 		url.PathEscape(puuid),
+		queue,
+		_type,
 		start,
 		count,
 	)
@@ -85,4 +89,16 @@ func (c *Client) MatchIDsByPUUID(ctx context.Context, region, puuid string, star
 		return nil, err
 	}
 	return ids, nil
+}
+
+func (c *Client) MatchByID(ctx context.Context, region, matchID string) (RiotMatch, error) {
+	u := fmt.Sprintf("https://%s.api.riotgames.com/lol/match/v5/matches/%s",
+		region,
+		url.PathEscape(matchID),
+	)
+	var match RiotMatch
+	if err := c.doJSON(ctx, http.MethodGet, u, &match); err != nil {
+		return RiotMatch{}, err
+	}
+	return match, nil
 }
