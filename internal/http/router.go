@@ -18,6 +18,9 @@ func NewRouter(cfg config.Config, db *storage.DB) http.Handler {
 	r := chi.NewRouter()
 	riotClient := riot.New(cfg.RiotAPIKey)
 
+	playerRepo := storage.NewPlayerRepo(db)
+	playerService := services.NewPlayerService(riotClient, playerRepo)
+
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Recoverer)
@@ -31,12 +34,6 @@ func NewRouter(cfg config.Config, db *storage.DB) http.Handler {
 			r.Get("/account", handlers.RiotAccount(riotClient))
 			r.Get("/matches", handlers.RiotMatches(riotClient))
 		})
-	})
-
-	playerRepo := storage.NewPlayerRepo(db)
-	playerService := services.NewPlayerService(riotClient, playerRepo)
-
-	r.Route("/v1", func(r chi.Router) {
 		r.Route("/player", func(r chi.Router) {
 			r.Post("/register", handlers.RegisterPlayer(playerService))
 		})

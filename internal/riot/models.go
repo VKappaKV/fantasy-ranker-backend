@@ -13,7 +13,6 @@ type RiotAPIError struct {
 	} `json:"status"`
 }
 
-// the DTO for match data
 type RiotMatch struct {
 	Metadata struct {
 		MatchID string `json:"matchId"`
